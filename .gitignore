@@ -1,0 +1,26 @@
+# ── Python / Backend ──────────────────────────────────────
+ecm-backend/venv/
+ecm-backend/__pycache__/
+ecm-backend/**/__pycache__/
+ecm-backend/**/*.pyc
+ecm-backend/**/*.pyo
+ecm-backend/.env
+ecm-backend/knowledge/faiss_index/
+ecm-backend/server.log
+*.egg-info/
+.pytest_cache/
+
+# ── Node / Frontend ───────────────────────────────────────
+ecm-agent/node_modules/
+ecm-agent/build/
+ecm-agent/.env
+ecm-agent/.env.local
+ecm-agent/.env.production
+
+# ── OS / Editor ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

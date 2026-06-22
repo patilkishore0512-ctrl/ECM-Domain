@@ -1,0 +1,22 @@
+.main {
+  margin-left: var(--sidebar-width);
+  padding: 20px calc(var(--space-xl) * 1.5) var(--space-xl);
+  padding-right: calc(var(--space-xl) * 1.5);
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+  transition: padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatOpen {
+  padding-right: calc(360px + var(--space-xl));
+}
+
+.footer {
+  margin-top: auto;
+  padding: var(--space-xl) 0 var(--space-md);
+  text-align: center;
+  font-size: var(--font-xs);
+  color: var(--text-faint);
+  border-top: 1px solid var(--border);
+}

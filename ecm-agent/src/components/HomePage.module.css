@@ -1,0 +1,335 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: clamp(420px, 55vh, 620px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.heroBgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgb(0 0 0 / 0.72) 0%,
+    rgb(31 0 5 / 0.65) 50%,
+    rgb(0 0 0 / 0.55) 100%
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  padding: 0 clamp(var(--space-xl), 6vw, 80px);
+  max-width: 700px;
+}
+
+.heroPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255 255 255 / 0.12);
+  border: 1px solid rgba(255 255 255 / 0.25);
+  color: #fff;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: var(--space-md);
+  backdrop-filter: blur(4px);
+}
+
+.heroPillDot {
+  width: 6px;
+  height: 6px;
+  background: var(--abb-red);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-md);
+}
+
+.heroAccent {
+  color: var(--abb-red);
+}
+
+.heroSub {
+  font-size: clamp(var(--font-sm), 1.6vw, var(--font-base));
+  color: rgba(255 255 255 / 0.82);
+  line-height: 1.65;
+  margin-bottom: var(--space-xl);
+  max-width: 560px;
+}
+
+.heroStats {
+  display: flex;
+  gap: var(--space-xl);
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heroStatValue {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.heroStatLabel {
+  font-size: var(--font-xs);
+  color: rgba(255 255 255 / 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ── Assets Section ─────────────────────────────────────────────────────── */
+.assetsSection {
+  flex: 1;
+  padding: clamp(var(--space-xl), 4vw, 56px) clamp(var(--space-lg), 4vw, 56px);
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: clamp(var(--space-xl), 3vw, 48px);
+}
+
+.sectionTitle {
+  font-size: clamp(var(--font-xl), 2.5vw, var(--font-2xl));
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-sm);
+}
+
+.sectionSub {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+}
+
+/* ── Asset Grid ─────────────────────────────────────────────────────────── */
+.assetGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+  .assetGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .assetGrid { grid-template-columns: 1fr; }
+}
+
+/* ── Asset Card ─────────────────────────────────────────────────────────── */
+.assetCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.assetCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.12);
+  border-color: var(--abb-red);
+}
+
+.assetCard:focus-visible {
+  outline: 2px solid var(--abb-red);
+  outline-offset: 2px;
+}
+
+/* ── Card Image ─────────────────────────────────────────────────────────── */
+.cardImage {
+  position: relative;
+  height: 180px;
+  background: var(--abb-dark);
+  overflow: hidden;
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.assetCard:hover .cardImg {
+  transform: scale(1.04);
+}
+
+.cardImgFallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgb(0 0 0 / 0.35) 100%
+  );
+}
+
+.cardTag {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.cardCoverage {
+  position: absolute;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(0 0 0 / 0.65);
+  color: rgba(255 255 255 / 0.9);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Card Body ──────────────────────────────────────────────────────────── */
+.cardBody {
+  padding: var(--space-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.cardName {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.cardSubtitle {
+  font-size: var(--font-xs);
+  color: var(--text-faint);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+.cardDesc {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* ── Feature List ───────────────────────────────────────────────────────── */
+.featureList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: var(--space-xs) 0;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Card CTA ───────────────────────────────────────────────────────────── */
+.cardCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: 11px var(--space-md);
+  margin-top: var(--space-sm);
+  background: var(--abb-red);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.cardCta:hover {
+  background: var(--abb-red-hover);
+  box-shadow: 0 4px 14px rgb(226 0 15 / 0.3);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: var(--space-lg) var(--space-xl);
+  font-size: var(--font-xs);
+  color: var(--text-faint);
+  border-top: 1px solid var(--border);
+}
