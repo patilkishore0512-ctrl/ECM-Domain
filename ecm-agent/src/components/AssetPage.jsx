@@ -1,4 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Layout from './Layout';
@@ -49,8 +53,36 @@ export default function AssetPage({ assetId }) {
   const [chatInput, setChatInput]     = useState('');
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [chatOpen, setChatOpen]       = useState(false);
-  const fileInputRef = useRef(null);
-  const chatEndRef   = useRef(null);
+  const [chatWidth, setChatWidth]     = useState(360);
+  const fileInputRef  = useRef(null);
+  const chatEndRef    = useRef(null);
+  const isDragging    = useRef(false);
+  const dragStartX    = useRef(0);
+  const dragStartW    = useRef(0);
+
+  function handleDragStart(e) {
+    isDragging.current = true;
+    dragStartX.current = e.clientX;
+    dragStartW.current = chatWidth;
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+
+    function onMove(ev) {
+      if (!isDragging.current) return;
+      const delta = dragStartX.current - ev.clientX;
+      const newW = Math.min(700, Math.max(300, dragStartW.current + delta));
+      setChatWidth(newW);
+    }
+    function onUp() {
+      isDragging.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -163,8 +195,154 @@ export default function AssetPage({ assetId }) {
 
   const canGenerate = !!uploadedFile && !isGenerating;
 
+  function handleExport() {
+    if (!report) return;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const now = new Date().toLocaleString('en-GB');
+
+    // ── Header bar ──
+    doc.setFillColor(204, 0, 0);
+    doc.rect(0, 0, pageW, 18, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ABB — ECM Domain Agent', 14, 7);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Electrical Condition Monitoring', 14, 13);
+
+    // ── Title ──
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${assetLabel} — Coverage Report`, 14, 30);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated: ${now}`, 14, 37);
+    if (uploadedFile) doc.text(`Source: ${uploadedFile.name}`, 14, 42);
+
+    // ── Summary stats ──
+    doc.setDrawColor(220, 220, 220);
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(14, 48, pageW - 28, 22, 2, 2, 'FD');
+
+    const stats = [
+      { label: 'Total Failure Modes', value: String(report.total) },
+      { label: 'Covered',             value: String(report.covered) },
+      { label: 'Gaps Found',          value: String(report.gaps) },
+      { label: 'Coverage Score',      value: `${report.coverage}%` },
+    ];
+    const colW = (pageW - 28) / 4;
+    stats.forEach((s, i) => {
+      const x = 14 + i * colW + colW / 2;
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(i === 2 ? 180 : i === 1 ? 0 : 30, i === 1 ? 140 : 30, 30);
+      doc.text(s.value, x, 57, { align: 'center' });
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(s.label, x, 63, { align: 'center' });
+    });
+
+    // ── Executive Summary ──
+    let curY = 78;
+    if (report.summary) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 30, 30);
+      doc.text('Executive Summary', 14, curY);
+      curY += 5;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(60, 60, 60);
+      const lines = doc.splitTextToSize(report.summary, pageW - 28);
+      doc.text(lines, 14, curY);
+      curY += lines.length * 5 + 6;
+    }
+
+    // ── Critical Gaps ──
+    if (report.critical_gaps && report.critical_gaps.length > 0) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 30, 30);
+      doc.text('Critical Gaps', 14, curY);
+      curY += 5;
+      report.critical_gaps.forEach(gap => {
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(180, 0, 0);
+        doc.text(`• ${gap}`, 16, curY);
+        curY += 5;
+      });
+      curY += 3;
+    }
+
+    // ── Failure Mode Table ──
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(30, 30, 30);
+    doc.text('Failure Mode Analysis', 14, curY);
+    curY += 4;
+
+    autoTable(doc, {
+      startY: curY,
+      head: [['#', 'Failure Mode', 'Severity', 'Status', 'Recommendation']],
+      body: report.items.map(item => [
+        item.id,
+        item.name,
+        item.severity,
+        item.status === 'Covered' ? '✓ Covered' : '⚠ Gap',
+        item.recommendation,
+      ]),
+      headStyles: { fillColor: [204, 0, 0], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+      bodyStyles: { fontSize: 8, textColor: [40, 40, 40] },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 42 },
+        2: { cellWidth: 22, halign: 'center' },
+        3: { cellWidth: 24, halign: 'center' },
+        4: { cellWidth: 'auto' },
+      },
+      didParseCell: (data) => {
+        if (data.column.index === 3 && data.section === 'body') {
+          const val = String(data.cell.raw);
+          if (val.includes('Gap')) {
+            data.cell.styles.textColor = [180, 0, 0];
+            data.cell.styles.fontStyle = 'bold';
+          } else {
+            data.cell.styles.textColor = [0, 140, 0];
+          }
+        }
+        if (data.column.index === 2 && data.section === 'body') {
+          const val = String(data.cell.raw);
+          if (val === 'High') data.cell.styles.textColor = [180, 0, 0];
+          else if (val === 'Medium') data.cell.styles.textColor = [180, 100, 0];
+          else data.cell.styles.textColor = [80, 80, 80];
+        }
+      },
+      alternateRowStyles: { fillColor: [250, 250, 250] },
+      margin: { left: 14, right: 14 },
+    });
+
+    // ── Footer ──
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`ECM Domain Agent — Confidential`, 14, 290);
+      doc.text(`Page ${i} of ${totalPages}`, pageW - 14, 290, { align: 'right' });
+    }
+
+    doc.save(`ECM_${assetLabel}_Coverage_Report_${Date.now()}.pdf`);
+  }
+
   return (
-    <Layout selectedAsset={assetId} chatOpen={chatOpen}>
+    <Layout selectedAsset={assetId} chatOpen={chatOpen} chatWidth={chatWidth}>
 
       {/* ── Page heading ── */}
       <div className="page-heading">
@@ -259,7 +437,7 @@ export default function AssetPage({ assetId }) {
             <div className="report-title">
               Coverage Report &mdash; <span className="report-asset">{assetLabel}</span>
             </div>
-            <button className="export-btn">
+            <button className="export-btn" onClick={handleExport}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/>
@@ -344,25 +522,23 @@ export default function AssetPage({ assetId }) {
       )}
 
       {/* ── Chat Pull-Tab ── */}
-      <button
-        className={`chat-toggle-tab${chatOpen ? ' panel-open' : ''}`}
-        onClick={() => setChatOpen(o => !o)}
-        title={chatOpen ? 'Close chat' : 'Open ECM Agent chat'}
-      >
-        {chatOpen ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        ) : (
+      {/* Toggle tab — only shown when panel is closed */}
+      {!chatOpen && (
+        <button
+          className="chat-toggle-tab"
+          onClick={() => setChatOpen(true)}
+          title="Open ECM Agent chat"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
-        )}
-        <span className="chat-toggle-label">{chatOpen ? 'Close' : 'AI Chat'}</span>
-      </button>
+          <span className="chat-toggle-label">AI Chat</span>
+        </button>
+      )}
 
       {/* ── Chat Sliding Panel ── */}
-      <div className={`chat-panel${chatOpen ? ' open' : ''}`}>
+      <div className={`chat-panel${chatOpen ? ' open' : ''}`} style={{ width: chatWidth }}>
+        <div className="chat-drag-handle" onMouseDown={handleDragStart} title="Drag to resize" />
         <div className="chat-panel-header">
           <div className="chat-panel-title">
             <span className="chat-panel-dot" />
@@ -387,7 +563,13 @@ export default function AssetPage({ assetId }) {
                   </div>
                 )}
                 <div className="msg-bubble">
-                  <span className="msg-bubble-text">{m.text}</span>
+                  {m.role === 'bot' ? (
+                    <div className="msg-markdown">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.text}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <span className="msg-bubble-text">{m.text}</span>
+                  )}
                 </div>
               </div>
             );

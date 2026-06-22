@@ -512,6 +512,59 @@
   display: block;
 }
 
+/* Markdown rendered inside bot chat bubbles */
+.msg-markdown {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #111;
+}
+.msg-markdown p { margin: 0 0 8px; }
+.msg-markdown p:last-child { margin-bottom: 0; }
+.msg-markdown strong { font-weight: 700; color: #111; }
+.msg-markdown em { font-style: italic; }
+.msg-markdown h1, .msg-markdown h2, .msg-markdown h3 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #cc0000;
+  margin: 10px 0 4px;
+}
+.msg-markdown ul, .msg-markdown ol {
+  margin: 4px 0 8px 16px;
+  padding: 0;
+}
+.msg-markdown li { margin-bottom: 3px; }
+.msg-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 12.5px;
+}
+.msg-markdown th {
+  background: #cc0000;
+  color: #fff;
+  padding: 5px 8px;
+  text-align: left;
+  font-weight: 600;
+}
+.msg-markdown td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+.msg-markdown tr:nth-child(even) td { background: #f9f9f9; }
+.msg-markdown code {
+  background: #f0f0f0;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 12px;
+}
+.msg-markdown hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 8px 0;
+}
+
 /* Typing indicator */
 .typing {
   display: flex;
@@ -594,6 +647,8 @@
   right: 0;
   bottom: 0;
   width: 360px;
+  min-width: 300px;
+  max-width: 700px;
   background: var(--bg-surface);
   border-left: 1px solid var(--border);
   box-shadow: -6px 0 32px rgb(0 0 0 / 0.1);
@@ -603,6 +658,7 @@
   transform: translateX(100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 .chat-panel.open {
   transform: translateX(0);
@@ -685,7 +741,7 @@
   border-radius: 50%;
 }
 
-/* ── Pull-Tab Toggle Button ── */
+/* ── Pull-Tab Toggle Button (only visible when panel is CLOSED) ── */
 .chat-toggle-tab {
   position: fixed;
   top: 50%;
@@ -704,7 +760,7 @@
   border-radius: 10px 0 0 10px;
   cursor: pointer;
   z-index: 301;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.2s;
   box-shadow: -3px 0 12px rgb(226 0 15 / 0.25);
 }
 
@@ -713,8 +769,9 @@
   box-shadow: -4px 0 18px rgb(226 0 15 / 0.4);
 }
 
-.chat-toggle-tab.panel-open {
-  right: 360px;
+.chat-toggle-tab.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .chat-toggle-label {
@@ -725,6 +782,35 @@
   letter-spacing: 1.2px;
   text-transform: uppercase;
   line-height: 1;
+}
+
+/* ── Drag Handle ── */
+.chat-drag-handle {
+  position: absolute;
+  left: -5px;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+.chat-drag-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 48px;
+  background: #ddd;
+  border-radius: 3px;
+  transition: background 0.15s, width 0.15s;
+}
+
+.chat-drag-handle:hover::after {
+  background: var(--abb-red);
+  width: 4px;
 }
 
 /* ─── HEADER ─── */
