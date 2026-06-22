@@ -137,7 +137,6 @@ export default function HomePage() {
             {[
               { value: '4',   label: 'Asset Types' },
               { value: '84',  label: 'Failure Modes' },
-              { value: 'AGENTIC', label: 'AI-Powered' },
             ].map(({ value, label }) => (
               <div key={label} className={styles.heroStat}>
                 <span className={styles.heroStatValue}>{value}</span>
