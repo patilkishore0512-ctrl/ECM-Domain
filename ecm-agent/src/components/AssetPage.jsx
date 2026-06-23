@@ -43,7 +43,11 @@ export default function AssetPage({ assetId }) {
   const [isGenerating, setIsGenerating]   = useState(false);
   const [progress, setProgress]           = useState(0);
   const [progressLabel, setProgressLabel] = useState('');
-  const [report, setReport]               = useState(null);
+  const [report, setReport] = useState(() => {
+    const saved = sessionStorage.getItem(`ecm_report_${assetId}`);
+    if (saved) { try { return JSON.parse(saved); } catch { /* ignore */ } }
+    return null;
+  });
   const [analyzeError, setAnalyzeError]   = useState(null);
   const [chatHistory, setChatHistory]     = useState([]);
   const [messages, setMessages] = useState(() => {
@@ -144,7 +148,19 @@ export default function AssetPage({ assetId }) {
       setProgress(100);
       setProgressLabel('Report ready!');
       await new Promise(r => setTimeout(r, 400));
-      setReport(mapApiReport(data));
+      const mapped = mapApiReport(data);
+      setReport(mapped);
+      sessionStorage.setItem(`ecm_report_${assetId}`, JSON.stringify(mapped));
+      // Persist summary for the dashboard
+      sessionStorage.setItem(`ecm_asset_${assetId}`, JSON.stringify({
+        coverage: mapped.coverage,
+        total: mapped.total,
+        covered: mapped.covered,
+        gaps: mapped.gaps,
+        summary: mapped.summary,
+        filename: uploadedFile.name,
+        analyzedAt: new Date().toISOString(),
+      }));
     } catch (err) {
       setAnalyzeError(err.message);
     } finally {
@@ -295,7 +311,7 @@ export default function AssetPage({ assetId }) {
         item.id,
         item.name,
         item.severity,
-        item.status === 'Covered' ? '✓ Covered' : '⚠ Gap',
+        item.status === 'Covered' ? 'Covered' : 'Gap',
         item.recommendation,
       ]),
       headStyles: { fillColor: [204, 0, 0], textColor: 255, fontStyle: 'bold', fontSize: 9 },

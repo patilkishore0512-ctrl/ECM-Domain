@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import styles from './HomePage.module.css';
@@ -99,6 +100,10 @@ const ASSET_TYPES = [
 
 export default function HomePage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
 
   return (
     <div className={styles.page}>

@@ -1,0 +1,312 @@
+.page {
+  padding: 4px 0 var(--space-xl);
+}
+
+/* ── Page Header ── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+}
+
+.pageSub {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.refreshNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* ── Summary Bar ── */
+.summaryBar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 32px;
+  margin-bottom: 28px;
+  gap: 0;
+}
+
+.summaryCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summaryValue {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.summaryLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.summaryDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  margin: 0 24px;
+}
+
+/* ── Asset Grid ── */
+.assetGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .assetGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Asset Card ── */
+.assetCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.assetCard:hover {
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+  border-color: var(--abb-red);
+}
+
+.analyzed {
+  border-top: 3px solid var(--abb-red);
+}
+
+.pending {
+  border-top: 3px solid var(--border);
+  opacity: 0.85;
+}
+
+/* ── Card Header ── */
+.cardHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardIconWrap {
+  width: 40px;
+  height: 40px;
+  background: var(--abb-red-light);
+  color: var(--abb-red);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.cardSub {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ── Status Badges ── */
+.statusBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.statusGood  { background: #dcfce7; color: #15803d; }
+.statusMod   { background: #fef9c3; color: #a16207; }
+.statusCrit  { background: #fee2e2; color: #dc2626; }
+
+.statusPending {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-faint);
+  background: var(--bg-elevated);
+  padding: 3px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Gauge ── */
+.gaugeWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyGauge {
+  opacity: 0.5;
+}
+
+/* ── Stats Row ── */
+.statsRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  gap: 0;
+  min-height: 56px;
+}
+
+.statItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.statVal {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statKey {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.noDataNote {
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+/* ── Timestamp ── */
+.timestamp {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-faint);
+  width: 100%;
+  justify-content: center;
+}
+
+.filename {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* ── CTA Button ── */
+.ctaBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.ctaBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.ctaView {
+  background: var(--abb-red);
+  color: #fff;
+}
+
+.ctaAnalyze {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+/* ── Empty State ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 14px;
+  max-width: 420px;
+  margin: 24px auto 0;
+  line-height: 1.6;
+}

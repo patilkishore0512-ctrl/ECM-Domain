@@ -21,7 +21,12 @@
   color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  margin-top: var(--space-sm);
   margin-bottom: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border);
+  width: 32px;
+  text-align: center;
 }
 
 .navItem {

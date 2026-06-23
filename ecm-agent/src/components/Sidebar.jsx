@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Sidebar.module.css';
 
@@ -43,10 +43,30 @@ const ASSET_TYPES = [
   { id: 'motors',      label: 'Motors',       Icon: IconMotors      },
 ];
 
+const IconDashboard = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1"/>
+    <rect x="14" y="3" width="7" height="7" rx="1"/>
+    <rect x="3" y="14" width="7" height="7" rx="1"/>
+    <rect x="14" y="14" width="7" height="7" rx="1"/>
+  </svg>
+);
+
 export default function Sidebar({ selectedAsset }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname === '/dashboard';
+
   return (
     <aside className={styles.sidebar}>
+      <button
+        className={`${styles.navItem} ${isDashboard ? styles.active : ''}`}
+        onClick={() => navigate('/dashboard')}
+        title="Dashboard"
+      >
+        <IconDashboard />
+        <span className={styles.tooltip}>Dashboard</span>
+      </button>
       <div className={styles.sectionLabel}>Assets</div>
       {ASSET_TYPES.map(({ id, label, Icon }) => (
         <button
