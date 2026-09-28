@@ -15,7 +15,7 @@ const ASSET_LABELS = {
   motors: 'Motors',
 };
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
 
 function mapApiReport(data) {
   return {
@@ -416,7 +416,7 @@ export default function AssetPage({ assetId }) {
           ref={fileInputRef}
           type="file"
           className="upload-input"
-          accept=".pdf,.xlsx,.xls,.docx,.doc"
+          accept=".pdf,.xlsx,.docx"
           onChange={handleFileChange}
         />
 

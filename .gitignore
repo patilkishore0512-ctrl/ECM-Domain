@@ -1,21 +1,28 @@
+# ── Secrets ───────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
 # ── Python / Backend ──────────────────────────────────────
-ecm-backend/venv/
-ecm-backend/__pycache__/
-ecm-backend/**/__pycache__/
-ecm-backend/**/*.pyc
-ecm-backend/**/*.pyo
-ecm-backend/.env
-ecm-backend/knowledge/faiss_index/
-ecm-backend/server.log
+venv/
+.venv/
+__pycache__/
+*.py[cod]
 *.egg-info/
 .pytest_cache/
+.deepeval/
+*.log
+backend/knowledge/faiss_index/
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # ── Node / Frontend ───────────────────────────────────────
-ecm-agent/node_modules/
-ecm-agent/build/
-ecm-agent/.env
-ecm-agent/.env.local
-ecm-agent/.env.production
+node_modules/
+frontend/build/
+frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # ── OS / Editor ───────────────────────────────────────────
 .DS_Store

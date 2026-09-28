@@ -95,9 +95,9 @@ def parse_knowledge_pdf(pdf_path: str) -> List[Dict]:
 def parse_tech_spec(file_path: str, file_type: str) -> str:
     if file_type == "pdf":
         return _parse_spec_pdf(file_path)
-    elif file_type in ["xlsx", "xls"]:
+    elif file_type == "xlsx":
         return _parse_spec_excel(file_path)
-    elif file_type in ["doc", "docx"]:
+    elif file_type == "docx":
         return _parse_spec_word(file_path)
     else:
         raise ValueError(f"Unsupported file type: {file_type}")

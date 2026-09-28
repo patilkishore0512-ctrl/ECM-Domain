@@ -23,6 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 VALID_ASSET_TYPES = {"transformer", "switchgear", "ups", "motors"}
+SUPPORTED_SPEC_TYPES = {"pdf", "xlsx", "docx"}
 
 embedding_client: Optional[AzureOpenAI] = None
 claude_client = None
@@ -59,7 +60,7 @@ app = FastAPI(title="ECM Domain Agent API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:3000").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -88,6 +89,8 @@ async def analyze(
 
     filename = file.filename or "uploaded_file"
     ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "pdf"
+    if ext not in SUPPORTED_SPEC_TYPES:
+        raise HTTPException(status_code=400, detail=f"Unsupported file type '.{ext}'. Upload a PDF, XLSX or DOCX file.")
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as tmp:
         content = await file.read()
