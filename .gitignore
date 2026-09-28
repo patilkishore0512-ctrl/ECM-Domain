@@ -12,12 +12,14 @@ __pycache__/
 .pytest_cache/
 .deepeval/
 *.log
-backend/knowledge/faiss_index/
+backend/knowledge/*
+!backend/knowledge/.gitkeep
 backend/uploads/*
 !backend/uploads/.gitkeep
 
 # ── Node / Frontend ───────────────────────────────────────
 node_modules/
+frontend/public/abb-logo.png
 frontend/build/
 frontend/coverage/
 npm-debug.log*

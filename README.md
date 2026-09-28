@@ -58,7 +58,7 @@ Reports are kept in `sessionStorage`, so they last until the tab closes or you r
 │   │   ├── report_generator.py      Coverage stats + prioritised recommendations
 │   │   ├── chat_service.py          RAG + spec-aware Q&A
 │   │   └── prompts.py               All LLM prompt templates
-│   ├── knowledge/                   Source PDF (faiss_index/ is generated, git-ignored)
+│   ├── knowledge/                   Source PDF + generated faiss_index/ (both git-ignored)
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/                        React 19 app (Create React App)
@@ -79,6 +79,17 @@ Reports are kept in `sessionStorage`, so they last until the tab closes or you r
 - **Node.js** 22+ and npm
 - An **Azure OpenAI** resource with a `text-embedding-3-large` deployment
 - A **Claude** endpoint and API key (Anthropic API or a compatible gateway)
+
+### Files not included in this repository
+
+Two proprietary files are git-ignored and must be added by hand after cloning:
+
+| File | Where to put it | Needed for |
+|------|-----------------|------------|
+| `4JNO000003-0816_Genix APM Predict Electrical Equipment_User Manual_Version 3.0 2.pdf` | `backend/knowledge/` | Building the knowledge base. The backend won't become ready without it, unless a prebuilt `faiss_index/` is present. The filename must match exactly (see `KNOWLEDGE_PDF` in `backend/services/rag_service.py`). |
+| `abb-logo.png` | `frontend/public/` | The header logo. The app runs without it, but the logo image is missing. |
+
+Get these from the project owner.
 
 ---
 
